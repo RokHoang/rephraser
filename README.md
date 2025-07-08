@@ -2,6 +2,10 @@
 
 Rephraser is a macOS menu bar application designed to help you rephrase text quickly and easily. Select any text, use a global hotkey, and get a rephrased version using the power of the Claude API.
 
+## Demo
+
+https://github.com/user-attachments/assets/demo.mov
+
 ## Features
 
 *   **Menu Bar Integration:** Access Rephraser directly from your menu bar with a clean, intuitive interface.
