@@ -83,15 +83,6 @@
             ReferencedContainer = "container:rephraser.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E8E2E9F62E1C1D1A00FBF0A8"
-            BuildableName = "rephraser.app"
-            BlueprintName = "rephraser"
-            ReferencedContainer = "container:rephraser.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -109,15 +100,6 @@
             ReferencedContainer = "container:rephraser.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E8E2E9F62E1C1D1A00FBF0A8"
-            BuildableName = "rephraser.app"
-            BlueprintName = "rephraser"
-            ReferencedContainer = "container:rephraser.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

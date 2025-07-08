@@ -388,6 +388,14 @@ struct SettingsView: View {
                 .tabItem {
                     Label("Styles", systemImage: "text.word.spacing")
                 }
+            
+            // History Tab
+            VStack(spacing: 0) {
+                HistoryTabContent()
+                    .environmentObject(appState)
+            }
+            .tabItem {
+                Label("History", systemImage: "clock.arrow.circlepath")
             }
         }
         .frame(width: 650, height: 550)
@@ -423,6 +431,7 @@ struct SettingsView: View {
             )
         }
     }
+}
     
     private func testConnection() {
         isTestingConnection = true
@@ -432,7 +441,7 @@ struct SettingsView: View {
             do {
                 let claudeAPI = ClaudeAPI(apiKey: apiKeyInput)
                 let startTime = Date()
-                let response = try await claudeAPI.rephrase(text: "Hello world", style: selectedStyle)
+                let response = try await claudeAPI.rephraseWithPrompt(text: "Hello world", prompt: selectedStyle.prompt)
                 let endTime = Date()
                 let responseTime = Int((endTime.timeIntervalSince(startTime)) * 1000)
                 
@@ -640,5 +649,182 @@ struct CustomStyleEditorView: View {
                 prompt = "Please rephrase the following text to [describe your style here]. Only return the rephrased text, nothing else:"
             }
         }
+    }
+}
+
+// MARK: - History Tab Content
+struct HistoryTabContent: View {
+    @EnvironmentObject var appState: AppState
+    @State private var searchText = ""
+    @State private var selectedEntry: RephrasingEntry? = nil
+    
+    var filteredEntries: [RephrasingEntry] {
+        if searchText.isEmpty {
+            return appState.history.entries
+        } else {
+            return appState.history.entries.filter { entry in
+                entry.originalText.localizedCaseInsensitiveContains(searchText) ||
+                entry.rephrasedText.localizedCaseInsensitiveContains(searchText) ||
+                (entry.appName?.localizedCaseInsensitiveContains(searchText) ?? false)
+            }
+        }
+    }
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            // Header with search and clear
+            VStack(spacing: 12) {
+                HStack {
+                    Text("Rephrasing History")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    Spacer()
+                    
+                    Text("\(appState.history.entries.count) entries")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Button("Clear All") {
+                        appState.history.clearHistory()
+                    }
+                    .disabled(appState.history.entries.isEmpty)
+                    .buttonStyle(.bordered)
+                }
+                
+                // Search bar
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.secondary)
+                    
+                    TextField("Search history...", text: $searchText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    
+                    if !searchText.isEmpty {
+                        Button("Clear") {
+                            searchText = ""
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+            
+            Divider()
+            
+            // History list
+            if filteredEntries.isEmpty {
+                VStack(spacing: 10) {
+                    Image(systemName: "clock.arrow.circlepath")
+                        .font(.largeTitle)
+                        .foregroundColor(.secondary)
+                    
+                    Text(searchText.isEmpty ? "No rephrasing history yet" : "No results found")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    
+                    if searchText.isEmpty {
+                        Text("Start rephrasing text to see history here")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 8) {
+                        ForEach(filteredEntries) { entry in
+                            CompactHistoryEntryView(entry: entry) {
+                                appState.history.deleteEntry(entry)
+                            }
+                            .onTapGesture {
+                                selectedEntry = entry
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                }
+            }
+        }
+        .sheet(item: $selectedEntry) { entry in
+            HistoryDetailView(entry: entry)
+        }
+    }
+}
+
+// MARK: - Compact History Entry for Settings Tab
+struct CompactHistoryEntryView: View {
+    let entry: RephrasingEntry
+    let onDelete: () -> Void
+    
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            // Timestamp and app info
+            VStack(alignment: .leading, spacing: 2) {
+                Text(entry.displayTimestamp)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                
+                if let appName = entry.appName {
+                    Text(appName)
+                        .font(.caption2)
+                        .foregroundColor(.blue)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 1)
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(3)
+                }
+            }
+            .frame(width: 80, alignment: .leading)
+            
+            // Text content
+            VStack(alignment: .leading, spacing: 6) {
+                // Original text
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Original")
+                        .font(.caption2)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                    
+                    Text(entry.shortOriginal)
+                        .font(.caption)
+                        .lineLimit(2)
+                        .padding(4)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(3)
+                }
+                
+                // Rephrased text
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Rephrased")
+                        .font(.caption2)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                    
+                    Text(entry.shortRephrased)
+                        .font(.caption)
+                        .lineLimit(2)
+                        .padding(4)
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(3)
+                }
+            }
+            
+            Spacer()
+            
+            // Delete button
+            Button(action: onDelete) {
+                Image(systemName: "trash")
+                    .font(.caption)
+                    .foregroundColor(.red)
+            }
+            .buttonStyle(.plain)
+            .help("Delete this entry")
+        }
+        .padding(8)
+        .background(Color.gray.opacity(0.05))
+        .cornerRadius(6)
+        .contentShape(Rectangle())
     }
 }

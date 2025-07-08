@@ -12,6 +12,7 @@ struct MenuBarView: View {
     @StateObject private var permissionsManager = PermissionsManager()
     @State private var showingPermissions = false
     @State private var showingHistory = false
+    @State private var showingStylePicker = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -63,16 +64,14 @@ struct MenuBarView: View {
                         action: { showingPermissions = true }
                     )
                     
-                    StatusCard(
-                        icon: appState.selectedRephraseStyle.icon,
-                        title: "Style",
-                        status: appState.selectedRephraseStyle.displayName,
-                        isPositive: true,
-                        action: { 
-                            // Open Settings to configure style
-                            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-                        }
+                    StylePickerCard(
+                        selectedStyle: appState.selectedRephraseStyle,
+                        onStyleChange: { newStyle in
+                            appState.saveRephraseStyle(newStyle)
+                        },
+                        showingStylePicker: $showingStylePicker
                     )
+                    .environmentObject(appState)
                 }
             }
             .padding(.horizontal, 16)
@@ -295,5 +294,181 @@ struct MenuButtonContent: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
         .contentShape(Rectangle())
+    }
+}
+
+// MARK: - Style Picker Card
+struct StylePickerCard: View {
+    let selectedStyle: RephraseStyleOption
+    let onStyleChange: (RephraseStyleOption) -> Void
+    @Binding var showingStylePicker: Bool
+    @EnvironmentObject var appState: AppState
+    
+    var body: some View {
+        Button(action: {
+            showingStylePicker.toggle()
+        }) {
+            HStack(spacing: 10) {
+                Image(systemName: selectedStyle.icon)
+                    .font(.caption)
+                    .foregroundColor(.blue)
+                    .frame(width: 16, height: 16)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Style")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(.primary)
+                    
+                    Text(selectedStyle.displayName)
+                        .font(.caption2)
+                        .foregroundColor(.blue)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.down")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .rotationEffect(.degrees(showingStylePicker ? 180 : 0))
+                    .animation(.easeInOut(duration: 0.2), value: showingStylePicker)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color(NSColor.quaternaryLabelColor))
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+        .contentShape(Rectangle())
+        .popover(isPresented: $showingStylePicker, arrowEdge: .bottom) {
+            StylePickerPopover(
+                selectedStyle: selectedStyle,
+                onStyleChange: { newStyle in
+                    onStyleChange(newStyle)
+                    showingStylePicker = false
+                },
+                onCreateCustom: {
+                    showingStylePicker = false
+                    // Open Settings window to create custom style
+                    NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                }
+            )
+            .environmentObject(appState)
+        }
+    }
+}
+
+// MARK: - Style Picker Popover
+struct StylePickerPopover: View {
+    let selectedStyle: RephraseStyleOption
+    let onStyleChange: (RephraseStyleOption) -> Void
+    let onCreateCustom: () -> Void
+    @EnvironmentObject var appState: AppState
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Header
+            HStack {
+                Text("Choose Style")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                Spacer()
+                Button("Create Custom") {
+                    onCreateCustom()
+                }
+                .font(.caption)
+                .buttonStyle(.bordered)
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 12)
+            
+            Divider()
+            
+            // Style List
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(appState.styleManager.allStyles) { style in
+                        StyleOptionRow(
+                            style: style,
+                            isSelected: style.id == selectedStyle.id,
+                            onSelect: {
+                                onStyleChange(style)
+                            }
+                        )
+                    }
+                }
+            }
+            .frame(maxHeight: 300)
+        }
+        .frame(width: 280)
+        .background(Color(NSColor.windowBackgroundColor))
+    }
+}
+
+// MARK: - Style Option Row
+struct StyleOptionRow: View {
+    let style: RephraseStyleOption
+    let isSelected: Bool
+    let onSelect: () -> Void
+    
+    var body: some View {
+        Button(action: onSelect) {
+            HStack(spacing: 12) {
+                Image(systemName: style.icon)
+                    .font(.system(size: 14))
+                    .foregroundColor(isSelected ? .white : .blue)
+                    .frame(width: 20, height: 20)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack {
+                        Text(style.displayName)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(isSelected ? .white : .primary)
+                        
+                        if style.isCustom {
+                            Text("CUSTOM")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .foregroundColor(isSelected ? .white.opacity(0.8) : .orange)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 1)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 3)
+                                        .fill(isSelected ? Color.white.opacity(0.2) : Color.orange.opacity(0.1))
+                                )
+                        }
+                        
+                        Spacer()
+                    }
+                    
+                    Text(style.description)
+                        .font(.caption)
+                        .foregroundColor(isSelected ? .white.opacity(0.8) : .secondary)
+                        .multilineTextAlignment(.leading)
+                }
+                
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(isSelected ? Color.blue : Color.clear)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(PlainButtonStyle())
+        .onHover { hovering in
+            // Add subtle hover effect for non-selected items
+            if !isSelected {
+                // Handle hover state if needed
+            }
+        }
     }
 }

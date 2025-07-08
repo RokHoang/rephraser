@@ -102,7 +102,7 @@ struct HistoryView: View {
                 }
             }
         }
-        .frame(width: 800, height: 600)
+        .frame(width: 700, height: 400)
         .sheet(item: $selectedEntry) { entry in
             HistoryDetailView(entry: entry)
         }
@@ -114,16 +114,16 @@ struct HistoryEntryView: View {
     let onDelete: () -> Void
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Header with timestamp and app
+        VStack(alignment: .leading, spacing: 6) {
+            // Compact header with timestamp and app
             HStack {
                 Text(entry.displayTimestamp)
-                    .font(.caption)
+                    .font(.caption2)
                     .foregroundColor(.secondary)
                 
                 if let appName = entry.appName {
                     Text("• \(appName)")
-                        .font(.caption)
+                        .font(.caption2)
                         .foregroundColor(.secondary)
                 }
                 
@@ -131,52 +131,55 @@ struct HistoryEntryView: View {
                 
                 Button(action: onDelete) {
                     Image(systemName: "trash")
+                        .font(.caption2)
                         .foregroundColor(.red)
                 }
                 .buttonStyle(.plain)
                 .help("Delete this entry")
             }
             
-            // Original text
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Original:")
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
+            // Compact text comparison in horizontal layout
+            HStack(alignment: .top, spacing: 8) {
+                // Original text (left side)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Original")
+                        .font(.caption2)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                    
+                    Text(entry.shortOriginal)
+                        .font(.caption)
+                        .lineLimit(3)
+                        .padding(6)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(4)
+                }
                 
-                Text(entry.shortOriginal)
-                    .font(.body)
-                    .padding(8)
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(6)
-            }
-            
-            // Arrow
-            HStack {
-                Spacer()
-                Image(systemName: "arrow.down")
+                // Arrow (center)
+                Image(systemName: "arrow.right")
                     .foregroundColor(.blue)
-                    .font(.caption)
-                Spacer()
-            }
-            
-            // Rephrased text
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Rephrased:")
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
+                    .font(.caption2)
+                    .padding(.top, 16)
                 
-                Text(entry.shortRephrased)
-                    .font(.body)
-                    .padding(8)
-                    .background(Color.blue.opacity(0.1))
-                    .cornerRadius(6)
+                // Rephrased text (right side)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Rephrased")
+                        .font(.caption2)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                    
+                    Text(entry.shortRephrased)
+                        .font(.caption)
+                        .lineLimit(3)
+                        .padding(6)
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(4)
+                }
             }
         }
-        .padding()
+        .padding(8)
         .background(Color.gray.opacity(0.05))
-        .cornerRadius(10)
+        .cornerRadius(6)
         .onTapGesture(count: 2) {
             // Double-click to view full entry
             // This will be handled by the List selection
