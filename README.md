@@ -4,7 +4,7 @@ Rephraser is a macOS menu bar application designed to help you rephrase text qui
 
 ## Demo
 
-https://github.com/RokHoang/rephraser/assets/demo.mov
+https://github.com/RokHoang/rephraser/asset/demo.mov
 
 <video src="asset/demo.mov" controls width="800">
   Your browser does not support the video tag.
