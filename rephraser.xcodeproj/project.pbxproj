@@ -6,43 +6,48 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E8E2EA3E2E1C227D00FBF0A8 /* Empty.md in Resources */ = {isa = PBXBuildFile; fileRef = E8E2EA3D2E1C227D00FBF0A8 /* Empty.md */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		E8E2EA062E1C1D1D00FBF0A8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E8E2E9EF2E1C1D1A00FBF0A8 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = E8E2E9F62E1C1D1A00FBF0A8;
-			remoteInfo = repharser;
+			remoteInfo = rephraser;
 		};
 		E8E2EA102E1C1D1D00FBF0A8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E8E2E9EF2E1C1D1A00FBF0A8 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = E8E2E9F62E1C1D1A00FBF0A8;
-			remoteInfo = repharser;
+			remoteInfo = rephraser;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		E8E2E9F72E1C1D1A00FBF0A8 /* repharser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = repharser.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		E8E2EA052E1C1D1D00FBF0A8 /* repharserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = repharserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E8E2EA0F2E1C1D1D00FBF0A8 /* repharserUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = repharserUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8E2E9F72E1C1D1A00FBF0A8 /* rephraser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = rephraser.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8E2EA052E1C1D1D00FBF0A8 /* rephraserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = rephraserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8E2EA0F2E1C1D1D00FBF0A8 /* rephraserUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = rephraserUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8E2EA3D2E1C227D00FBF0A8 /* Empty.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Empty.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E8E2E9F92E1C1D1A00FBF0A8 /* repharser */ = {
+		E8E2E9F92E1C1D1A00FBF0A8 /* rephraser */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = repharser;
+			path = rephraser;
 			sourceTree = "<group>";
 		};
-		E8E2EA082E1C1D1D00FBF0A8 /* repharserTests */ = {
+		E8E2EA082E1C1D1D00FBF0A8 /* rephraserTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = repharserTests;
+			path = rephraserTests;
 			sourceTree = "<group>";
 		};
-		E8E2EA122E1C1D1D00FBF0A8 /* repharserUITests */ = {
+		E8E2EA122E1C1D1D00FBF0A8 /* rephraserUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = repharserUITests;
+			path = rephraserUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,9 +80,10 @@
 		E8E2E9EE2E1C1D1A00FBF0A8 = {
 			isa = PBXGroup;
 			children = (
-				E8E2E9F92E1C1D1A00FBF0A8 /* repharser */,
-				E8E2EA082E1C1D1D00FBF0A8 /* repharserTests */,
-				E8E2EA122E1C1D1D00FBF0A8 /* repharserUITests */,
+				E8E2EA3D2E1C227D00FBF0A8 /* Empty.md */,
+				E8E2E9F92E1C1D1A00FBF0A8 /* rephraser */,
+				E8E2EA082E1C1D1D00FBF0A8 /* rephraserTests */,
+				E8E2EA122E1C1D1D00FBF0A8 /* rephraserUITests */,
 				E8E2E9F82E1C1D1A00FBF0A8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,9 +91,9 @@
 		E8E2E9F82E1C1D1A00FBF0A8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E8E2E9F72E1C1D1A00FBF0A8 /* repharser.app */,
-				E8E2EA052E1C1D1D00FBF0A8 /* repharserTests.xctest */,
-				E8E2EA0F2E1C1D1D00FBF0A8 /* repharserUITests.xctest */,
+				E8E2E9F72E1C1D1A00FBF0A8 /* rephraser.app */,
+				E8E2EA052E1C1D1D00FBF0A8 /* rephraserTests.xctest */,
+				E8E2EA0F2E1C1D1D00FBF0A8 /* rephraserUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +101,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E8E2E9F62E1C1D1A00FBF0A8 /* repharser */ = {
+		E8E2E9F62E1C1D1A00FBF0A8 /* rephraser */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E8E2EA192E1C1D1D00FBF0A8 /* Build configuration list for PBXNativeTarget "repharser" */;
+			buildConfigurationList = E8E2EA192E1C1D1D00FBF0A8 /* Build configuration list for PBXNativeTarget "rephraser" */;
 			buildPhases = (
 				E8E2E9F32E1C1D1A00FBF0A8 /* Sources */,
 				E8E2E9F42E1C1D1A00FBF0A8 /* Frameworks */,
@@ -108,18 +114,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				E8E2E9F92E1C1D1A00FBF0A8 /* repharser */,
+				E8E2E9F92E1C1D1A00FBF0A8 /* rephraser */,
 			);
-			name = repharser;
+			name = rephraser;
 			packageProductDependencies = (
 			);
-			productName = repharser;
-			productReference = E8E2E9F72E1C1D1A00FBF0A8 /* repharser.app */;
+			productName = rephraser;
+			productReference = E8E2E9F72E1C1D1A00FBF0A8 /* rephraser.app */;
 			productType = "com.apple.product-type.application";
 		};
-		E8E2EA042E1C1D1D00FBF0A8 /* repharserTests */ = {
+		E8E2EA042E1C1D1D00FBF0A8 /* rephraserTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E8E2EA1C2E1C1D1D00FBF0A8 /* Build configuration list for PBXNativeTarget "repharserTests" */;
+			buildConfigurationList = E8E2EA1C2E1C1D1D00FBF0A8 /* Build configuration list for PBXNativeTarget "rephraserTests" */;
 			buildPhases = (
 				E8E2EA012E1C1D1D00FBF0A8 /* Sources */,
 				E8E2EA022E1C1D1D00FBF0A8 /* Frameworks */,
@@ -131,18 +137,18 @@
 				E8E2EA072E1C1D1D00FBF0A8 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				E8E2EA082E1C1D1D00FBF0A8 /* repharserTests */,
+				E8E2EA082E1C1D1D00FBF0A8 /* rephraserTests */,
 			);
-			name = repharserTests;
+			name = rephraserTests;
 			packageProductDependencies = (
 			);
-			productName = repharserTests;
-			productReference = E8E2EA052E1C1D1D00FBF0A8 /* repharserTests.xctest */;
+			productName = rephraserTests;
+			productReference = E8E2EA052E1C1D1D00FBF0A8 /* rephraserTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		E8E2EA0E2E1C1D1D00FBF0A8 /* repharserUITests */ = {
+		E8E2EA0E2E1C1D1D00FBF0A8 /* rephraserUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E8E2EA1F2E1C1D1D00FBF0A8 /* Build configuration list for PBXNativeTarget "repharserUITests" */;
+			buildConfigurationList = E8E2EA1F2E1C1D1D00FBF0A8 /* Build configuration list for PBXNativeTarget "rephraserUITests" */;
 			buildPhases = (
 				E8E2EA0B2E1C1D1D00FBF0A8 /* Sources */,
 				E8E2EA0C2E1C1D1D00FBF0A8 /* Frameworks */,
@@ -154,13 +160,13 @@
 				E8E2EA112E1C1D1D00FBF0A8 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				E8E2EA122E1C1D1D00FBF0A8 /* repharserUITests */,
+				E8E2EA122E1C1D1D00FBF0A8 /* rephraserUITests */,
 			);
-			name = repharserUITests;
+			name = rephraserUITests;
 			packageProductDependencies = (
 			);
-			productName = repharserUITests;
-			productReference = E8E2EA0F2E1C1D1D00FBF0A8 /* repharserUITests.xctest */;
+			productName = rephraserUITests;
+			productReference = E8E2EA0F2E1C1D1D00FBF0A8 /* rephraserUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +192,7 @@
 					};
 				};
 			};
-			buildConfigurationList = E8E2E9F22E1C1D1A00FBF0A8 /* Build configuration list for PBXProject "repharser" */;
+			buildConfigurationList = E8E2E9F22E1C1D1A00FBF0A8 /* Build configuration list for PBXProject "rephraser" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +206,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E8E2E9F62E1C1D1A00FBF0A8 /* repharser */,
-				E8E2EA042E1C1D1D00FBF0A8 /* repharserTests */,
-				E8E2EA0E2E1C1D1D00FBF0A8 /* repharserUITests */,
+				E8E2E9F62E1C1D1A00FBF0A8 /* rephraser */,
+				E8E2EA042E1C1D1D00FBF0A8 /* rephraserTests */,
+				E8E2EA0E2E1C1D1D00FBF0A8 /* rephraserUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -212,6 +218,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E8E2EA3E2E1C227D00FBF0A8 /* Empty.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,12 +265,12 @@
 /* Begin PBXTargetDependency section */
 		E8E2EA072E1C1D1D00FBF0A8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = E8E2E9F62E1C1D1A00FBF0A8 /* repharser */;
+			target = E8E2E9F62E1C1D1A00FBF0A8 /* rephraser */;
 			targetProxy = E8E2EA062E1C1D1D00FBF0A8 /* PBXContainerItemProxy */;
 		};
 		E8E2EA112E1C1D1D00FBF0A8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = E8E2E9F62E1C1D1A00FBF0A8 /* repharser */;
+			target = E8E2E9F62E1C1D1A00FBF0A8 /* rephraser */;
 			targetProxy = E8E2EA102E1C1D1D00FBF0A8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -392,7 +399,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = repharser/repharser.entitlements;
+				CODE_SIGN_ENTITLEMENTS = rephraser/rephraser.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -404,7 +411,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = rokhoang.repharser;
+				PRODUCT_BUNDLE_IDENTIFIER = rokhoang.rephraser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -417,7 +424,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = repharser/repharser.entitlements;
+				CODE_SIGN_ENTITLEMENTS = rephraser/rephraser.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -429,7 +436,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = rokhoang.repharser;
+				PRODUCT_BUNDLE_IDENTIFIER = rokhoang.rephraser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -446,11 +453,11 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = rokhoang.repharserTests;
+				PRODUCT_BUNDLE_IDENTIFIER = rokhoang.rephraserTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/repharser.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/repharser";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/rephraser.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/rephraser";
 			};
 			name = Debug;
 		};
@@ -463,11 +470,11 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = rokhoang.repharserTests;
+				PRODUCT_BUNDLE_IDENTIFIER = rokhoang.rephraserTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/repharser.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/repharser";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/rephraser.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/rephraser";
 			};
 			name = Release;
 		};
@@ -478,11 +485,11 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = rokhoang.repharserUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = rokhoang.rephraserUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = repharser;
+				TEST_TARGET_NAME = rephraser;
 			};
 			name = Debug;
 		};
@@ -493,18 +500,18 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = rokhoang.repharserUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = rokhoang.rephraserUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = repharser;
+				TEST_TARGET_NAME = rephraser;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E8E2E9F22E1C1D1A00FBF0A8 /* Build configuration list for PBXProject "repharser" */ = {
+		E8E2E9F22E1C1D1A00FBF0A8 /* Build configuration list for PBXProject "rephraser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E8E2EA172E1C1D1D00FBF0A8 /* Debug */,
@@ -513,7 +520,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E8E2EA192E1C1D1D00FBF0A8 /* Build configuration list for PBXNativeTarget "repharser" */ = {
+		E8E2EA192E1C1D1D00FBF0A8 /* Build configuration list for PBXNativeTarget "rephraser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E8E2EA1A2E1C1D1D00FBF0A8 /* Debug */,
@@ -522,7 +529,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E8E2EA1C2E1C1D1D00FBF0A8 /* Build configuration list for PBXNativeTarget "repharserTests" */ = {
+		E8E2EA1C2E1C1D1D00FBF0A8 /* Build configuration list for PBXNativeTarget "rephraserTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E8E2EA1D2E1C1D1D00FBF0A8 /* Debug */,
@@ -531,7 +538,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E8E2EA1F2E1C1D1D00FBF0A8 /* Build configuration list for PBXNativeTarget "repharserUITests" */ = {
+		E8E2EA1F2E1C1D1D00FBF0A8 /* Build configuration list for PBXNativeTarget "rephraserUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E8E2EA202E1C1D1D00FBF0A8 /* Debug */,

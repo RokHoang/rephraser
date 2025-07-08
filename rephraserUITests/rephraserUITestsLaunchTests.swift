@@ -1,13 +1,13 @@
 //
-//  repharserUITestsLaunchTests.swift
-//  repharserUITests
+//  rephraserUITestsLaunchTests.swift
+//  rephraserUITests
 //
 //  Created by Rok Hoang on 7/7/25.
 //
 
 import XCTest
 
-final class repharserUITestsLaunchTests: XCTestCase {
+final class rephraserUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

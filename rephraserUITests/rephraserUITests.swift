@@ -1,13 +1,13 @@
 //
-//  repharserUITests.swift
-//  repharserUITests
+//  rephraserUITests.swift
+//  rephraserUITests
 //
 //  Created by Rok Hoang on 7/7/25.
 //
 
 import XCTest
 
-final class repharserUITests: XCTestCase {
+final class rephraserUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
