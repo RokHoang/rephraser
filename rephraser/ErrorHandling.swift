@@ -243,6 +243,22 @@ struct ErrorDetailView: View {
     
     var body: some View {
         VStack(spacing: 20) {
+            // Header with Back Button
+            HStack {
+                Button(action: onDismiss) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                            .font(.caption)
+                        Text("Back")
+                            .font(.caption)
+                    }
+                    .foregroundColor(.blue)
+                }
+                .buttonStyle(.plain)
+                
+                Spacer()
+            }
+            
             // Error icon and title
             VStack(spacing: 12) {
                 Image(systemName: error.icon)

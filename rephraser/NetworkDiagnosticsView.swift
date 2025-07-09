@@ -15,9 +15,23 @@ struct NetworkDiagnosticsView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            // Header
+            // Header with Back Button
             HStack {
-                VStack(alignment: .leading) {
+                Button(action: { dismiss() }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                            .font(.caption)
+                        Text("Back")
+                            .font(.caption)
+                    }
+                    .foregroundColor(.blue)
+                }
+                .buttonStyle(.plain)
+                .keyboardShortcut(.escape)
+                
+                Spacer()
+                
+                VStack(alignment: .center) {
                     Text("Network Diagnostics")
                         .font(.title)
                         .fontWeight(.semibold)

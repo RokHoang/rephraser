@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HistoryView: View {
     @EnvironmentObject var appState: AppState
-    @Environment(\.dismiss) private var dismiss
+    let onBack: () -> Void
     @State private var searchText = ""
     @State private var selectedEntry: RephrasingEntry? = nil
     
@@ -27,9 +27,23 @@ struct HistoryView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header
+            // Header with Back Button
             HStack {
-                VStack(alignment: .leading) {
+                Button(action: { onBack() }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                            .font(.caption)
+                        Text("Back")
+                            .font(.caption)
+                    }
+                    .foregroundColor(.blue)
+                }
+                .buttonStyle(.plain)
+                .keyboardShortcut(.escape)
+                
+                Spacer()
+                
+                VStack(alignment: .center) {
                     Text("Rephrasing History")
                         .font(.title)
                         .fontWeight(.semibold)
@@ -41,16 +55,18 @@ struct HistoryView: View {
                 
                 Spacer()
                 
-                Button("Clear All") {
-                    appState.history.clearHistory()
+                HStack(spacing: 10) {
+                    Button("Clear All") {
+                        appState.history.clearHistory()
+                    }
+                    .disabled(appState.history.entries.isEmpty)
+                    
+                    Button("Done") {
+                        onBack()
+                    }
+                    .keyboardShortcut(.defaultAction)
+                    .buttonStyle(.borderedProminent)
                 }
-                .disabled(appState.history.entries.isEmpty)
-                
-                Button("Done") {
-                    dismiss()
-                }
-                .keyboardShortcut(.defaultAction)
-                .buttonStyle(.borderedProminent)
             }
             .padding()
             
@@ -115,8 +131,13 @@ struct HistoryEntryView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // Compact header with timestamp and app
+            // Compact header with timestamp, app, and provider
             HStack {
+                // Status indicator
+                Image(systemName: entry.isSuccess ? "checkmark.circle.fill" : "xmark.circle.fill")
+                    .font(.caption2)
+                    .foregroundColor(entry.isSuccess ? .green : .red)
+                
                 Text(entry.displayTimestamp)
                     .font(.caption2)
                     .foregroundColor(.secondary)
@@ -125,6 +146,29 @@ struct HistoryEntryView: View {
                     Text("• \(appName)")
                         .font(.caption2)
                         .foregroundColor(.secondary)
+                }
+                
+                // API Provider indicator
+                HStack(spacing: 2) {
+                    Image(systemName: entry.apiProvider.icon)
+                        .font(.caption2)
+                    Text(entry.apiProvider.displayName)
+                        .font(.caption2)
+                }
+                .foregroundColor(.blue)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 1)
+                .background(Color.blue.opacity(0.1))
+                .cornerRadius(4)
+                
+                if let style = entry.style {
+                    Text(style)
+                        .font(.caption2)
+                        .foregroundColor(.purple)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 1)
+                        .background(Color.purple.opacity(0.1))
+                        .cornerRadius(4)
                 }
                 
                 Spacer()
@@ -193,12 +237,30 @@ struct HistoryDetailView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            // Header
+            // Header with Back Button
             HStack {
-                VStack(alignment: .leading) {
-                    Text("Rephrasing Detail")
-                        .font(.title)
-                        .fontWeight(.semibold)
+                Button(action: { dismiss() }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                            .font(.caption)
+                        Text("Back")
+                            .font(.caption)
+                    }
+                    .foregroundColor(.blue)
+                }
+                .buttonStyle(.plain)
+                .keyboardShortcut(.escape)
+                
+                Spacer()
+                
+                VStack(alignment: .center) {
+                    HStack {
+                        Image(systemName: entry.isSuccess ? "checkmark.circle.fill" : "xmark.circle.fill")
+                            .foregroundColor(entry.isSuccess ? .green : .red)
+                        Text(entry.isSuccess ? "Rephrasing Detail" : "Failed Rephrasing")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                    }
                     
                     HStack {
                         Text(entry.displayTimestamp)
@@ -209,6 +271,29 @@ struct HistoryDetailView: View {
                             Text("• \(appName)")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
+                        }
+                        
+                        // API Provider indicator
+                        HStack(spacing: 2) {
+                            Image(systemName: entry.apiProvider.icon)
+                                .font(.caption)
+                            Text(entry.apiProvider.displayName)
+                                .font(.caption)
+                        }
+                        .foregroundColor(.blue)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 1)
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(4)
+                        
+                        if let style = entry.style {
+                            Text(style)
+                                .font(.caption)
+                                .foregroundColor(.purple)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 1)
+                                .background(Color.purple.opacity(0.1))
+                                .cornerRadius(4)
                         }
                     }
                 }
@@ -243,20 +328,39 @@ struct HistoryDetailView: View {
                     .frame(maxHeight: 150)
                 }
                 
-                // Rephrased
+                // Rephrased or Error
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Rephrased Text:")
+                    Text(entry.isSuccess ? "Rephrased Text:" : "Error Details:")
                         .font(.headline)
                         .foregroundColor(.secondary)
                     
                     ScrollView {
-                        Text(entry.rephrasedText)
-                            .font(.body)
-                            .textSelection(.enabled)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding()
-                            .background(Color.blue.opacity(0.1))
-                            .cornerRadius(8)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(entry.rephrasedText)
+                                .font(.body)
+                                .textSelection(.enabled)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding()
+                                .background(entry.isSuccess ? Color.blue.opacity(0.1) : Color.red.opacity(0.1))
+                                .cornerRadius(8)
+                            
+                            if !entry.isSuccess, let errorMessage = entry.errorMessage {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Error Message:")
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.red)
+                                    
+                                    Text(errorMessage)
+                                        .font(.caption)
+                                        .textSelection(.enabled)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding(6)
+                                        .background(Color.red.opacity(0.05))
+                                        .cornerRadius(4)
+                                }
+                            }
+                        }
                     }
                     .frame(maxHeight: 150)
                 }
@@ -284,6 +388,6 @@ struct HistoryDetailView: View {
 }
 
 #Preview {
-    HistoryView()
+    HistoryView(onBack: {})
         .environmentObject(AppState())
 }

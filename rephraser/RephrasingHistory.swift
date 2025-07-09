@@ -7,19 +7,57 @@
 
 import Foundation
 
+enum APIProvider: String, Codable, CaseIterable {
+    case claude = "Claude"
+    case openai = "OpenAI"
+    
+    var displayName: String {
+        return rawValue
+    }
+    
+    var icon: String {
+        switch self {
+        case .claude:
+            return "brain.head.profile"
+        case .openai:
+            return "cpu"
+        }
+    }
+}
+
 struct RephrasingEntry: Identifiable, Codable, Hashable {
     let id: UUID
     let originalText: String
     let rephrasedText: String
     let timestamp: Date
     let appName: String?
+    let style: String?
+    let apiProvider: APIProvider
+    let isSuccess: Bool
+    let errorMessage: String?
     
-    init(originalText: String, rephrasedText: String, timestamp: Date, appName: String? = nil) {
+    init(originalText: String, rephrasedText: String, timestamp: Date = Date(), appName: String? = nil, style: String? = nil, apiProvider: APIProvider = .claude) {
         self.id = UUID()
         self.originalText = originalText
         self.rephrasedText = rephrasedText
         self.timestamp = timestamp
         self.appName = appName
+        self.style = style
+        self.apiProvider = apiProvider
+        self.isSuccess = true
+        self.errorMessage = nil
+    }
+    
+    init(originalText: String, errorMessage: String, timestamp: Date = Date(), appName: String? = nil, style: String? = nil, apiProvider: APIProvider = .claude) {
+        self.id = UUID()
+        self.originalText = originalText
+        self.rephrasedText = "❌ Failed: \(errorMessage)"
+        self.timestamp = timestamp
+        self.appName = appName
+        self.style = style
+        self.apiProvider = apiProvider
+        self.isSuccess = false
+        self.errorMessage = errorMessage
     }
     
     var displayTimestamp: String {
@@ -55,14 +93,29 @@ class RephrasingHistory: ObservableObject {
         loadHistory()
     }
     
-    func addEntry(original: String, rephrased: String, appName: String? = nil) {
+    func addEntry(original: String, rephrased: String, appName: String? = nil, style: String? = nil, apiProvider: APIProvider = .claude) {
         let entry = RephrasingEntry(
             originalText: original,
             rephrasedText: rephrased,
-            timestamp: Date(),
-            appName: appName
+            appName: appName,
+            style: style,
+            apiProvider: apiProvider
         )
-        
+        addEntry(entry)
+    }
+    
+    func addFailedEntry(original: String, errorMessage: String, appName: String? = nil, style: String? = nil, apiProvider: APIProvider = .claude) {
+        let entry = RephrasingEntry(
+            originalText: original,
+            errorMessage: errorMessage,
+            appName: appName,
+            style: style,
+            apiProvider: apiProvider
+        )
+        addEntry(entry)
+    }
+    
+    func addEntry(_ entry: RephrasingEntry) {
         DispatchQueue.main.async {
             self.entries.insert(entry, at: 0)
             

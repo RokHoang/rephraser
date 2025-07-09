@@ -16,6 +16,8 @@ class KeychainHelper {
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: service,
             kSecAttrAccount: account,
+            kSecAttrAccessible: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+            kSecAttrSynchronizable: false
         ] as CFDictionary
         
         let status = SecItemAdd(query, nil)
@@ -25,9 +27,13 @@ class KeychainHelper {
                 kSecClass: kSecClassGenericPassword,
                 kSecAttrService: service,
                 kSecAttrAccount: account,
+                kSecAttrSynchronizable: false
             ] as CFDictionary
             
-            let attributesToUpdate = [kSecValueData: data] as CFDictionary
+            let attributesToUpdate = [
+                kSecValueData: data,
+                kSecAttrAccessible: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+            ] as CFDictionary
             SecItemUpdate(query, attributesToUpdate)
         }
     }
@@ -37,13 +43,15 @@ class KeychainHelper {
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: service,
             kSecAttrAccount: account,
-            kSecReturnData: true
+            kSecAttrSynchronizable: false,
+            kSecReturnData: true,
+            kSecMatchLimit: kSecMatchLimitOne
         ] as CFDictionary
         
         var result: AnyObject?
-        SecItemCopyMatching(query, &result)
+        let status = SecItemCopyMatching(query, &result)
         
-        if let data = result as? Data {
+        if status == errSecSuccess, let data = result as? Data {
             return String(data: data, encoding: .utf8)
         }
         return nil

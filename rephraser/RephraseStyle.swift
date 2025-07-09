@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Custom Style Structure
-struct CustomRephraseStyle: Codable, Identifiable, Equatable {
+struct CustomRephraseStyle: Codable, Identifiable, Equatable, Hashable {
     let id = UUID()
     var name: String
     var description: String
@@ -73,7 +73,7 @@ class RephraseStyleManager: ObservableObject {
 }
 
 // MARK: - Style Option Enum
-enum RephraseStyleOption: Identifiable, Equatable {
+enum RephraseStyleOption: Identifiable, Equatable, Hashable {
     case builtin(RephraseStyle)
     case custom(CustomRephraseStyle)
     

@@ -7,14 +7,65 @@
 
 import SwiftUI
 
+enum MenuBarNavigation {
+    case main
+    case permissions
+    case history
+    case directResult
+}
+
 struct MenuBarView: View {
     @EnvironmentObject var appState: AppState
     @StateObject private var permissionsManager = PermissionsManager()
-    @State private var showingPermissions = false
-    @State private var showingHistory = false
+    @State private var currentView: MenuBarNavigation = .main
     @State private var showingStylePicker = false
+    @State private var directInputText = ""
+    @State private var directRephraseResult = ""
     
     var body: some View {
+        Group {
+            switch currentView {
+            case .main:
+                mainView
+            case .permissions:
+                PermissionsView(onBack: { currentView = .main })
+            case .history:
+                HistoryView(onBack: { currentView = .main })
+            case .directResult:
+                DirectRephraseResultView(
+                    originalText: directInputText,
+                    rephrasedText: directRephraseResult,
+                    onDismiss: { currentView = .main },
+                    onUseResult: {
+                        directInputText = directRephraseResult
+                        currentView = .main
+                    }
+                )
+            }
+        }
+        .sheet(isPresented: $appState.errorHandler.showingErrorDetails) {
+            if let error = appState.errorHandler.lastError {
+                ErrorDetailView(
+                    error: error,
+                    onDismiss: {
+                        appState.errorHandler.showingErrorDetails = false
+                    },
+                    onAction: {
+                        appState.errorHandler.showingErrorDetails = false
+                        // Action logic would go here
+                    }
+                )
+            }
+        }
+        .onAppear {
+            if !permissionsManager.accessibilityPermissionGranted && appState.shouldShowPermissionsOnStartup {
+                currentView = .permissions
+                appState.shouldShowPermissionsOnStartup = false
+            }
+        }
+    }
+    
+    private var mainView: some View {
         VStack(spacing: 0) {
             // Header Section
             VStack(spacing: 12) {
@@ -47,9 +98,9 @@ struct MenuBarView: View {
                 VStack(spacing: 8) {
                     StatusCard(
                         icon: "key.fill",
-                        title: "API Key",
-                        status: appState.claudeAPIKey.isEmpty ? "Not configured" : "Ready",
-                        isPositive: !appState.claudeAPIKey.isEmpty,
+                        title: "\(appState.selectedAPIProvider.displayName) API",
+                        status: appState.isAPIKeyConfigured ? "Ready" : "Not configured",
+                        isPositive: appState.isAPIKeyConfigured,
                         action: { 
                             // Open Settings to configure API key
                             NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
@@ -61,7 +112,7 @@ struct MenuBarView: View {
                         title: "Accessibility",
                         status: permissionsManager.accessibilityPermissionGranted ? "Enabled" : "Required",
                         isPositive: permissionsManager.accessibilityPermissionGranted,
-                        action: { showingPermissions = true }
+                        action: { currentView = .permissions }
                     )
                     
                     StylePickerCard(
@@ -78,6 +129,58 @@ struct MenuBarView: View {
             .padding(.vertical, 16)
             .background(Color(NSColor.controlBackgroundColor))
             
+            // Direct Text Input Section
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "text.cursor")
+                        .foregroundColor(.blue)
+                        .font(.caption)
+                    Text("Direct Input")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                    
+                    Spacer()
+                    
+                    if appState.isProcessing {
+                        ProgressView()
+                            .scaleEffect(0.6)
+                    }
+                }
+                
+                VStack(spacing: 8) {
+                    TextEditor(text: $directInputText)
+                        .frame(height: 60)
+                        .padding(6)
+                        .background(Color(NSColor.textBackgroundColor))
+                        .cornerRadius(6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        )
+                        .disabled(appState.isProcessing)
+                    
+                    HStack {
+                        Button("Rephrase") {
+                            Task {
+                                await performDirectRephrase()
+                            }
+                        }
+                        .disabled(directInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || appState.isProcessing)
+                        .buttonStyle(.borderedProminent)
+                        .keyboardShortcut(.return, modifiers: [.command])
+                        
+                        Spacer()
+                        
+                        Text("⌘↩")
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color(NSColor.controlBackgroundColor).opacity(0.7))
+            
             // Usage Instructions
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
@@ -89,7 +192,7 @@ struct MenuBarView: View {
                         .fontWeight(.medium)
                 }
                 
-                Text("Select text and press \(appState.customHotkey.displayName)")
+                Text("Select text and press \(appState.customHotkey.displayName) • Or use Direct Input above")
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }
@@ -106,14 +209,14 @@ struct MenuBarView: View {
                     icon: "clock.arrow.circlepath",
                     title: "History",
                     shortcut: "H",
-                    action: { showingHistory = true }
+                    action: { currentView = .history }
                 )
                 
                 MenuButton(
                     icon: "shield.checkered",
                     title: "Permissions",
                     shortcut: "P",
-                    action: { showingPermissions = true }
+                    action: { currentView = .permissions }
                 )
                 
                 MenuButton(
@@ -126,6 +229,13 @@ struct MenuBarView: View {
                 
                 Divider()
                     .padding(.horizontal, 12)
+                
+                MenuButton(
+                    icon: "arrow.clockwise",
+                    title: "Restart Rephraser",
+                    shortcut: "R",
+                    action: { appState.restartApplicationAlternative() }
+                )
                 
                 MenuButton(
                     icon: "power",
@@ -145,16 +255,10 @@ struct MenuBarView: View {
             // Show permissions dialog on startup if needed
             if appState.shouldShowPermissionsOnStartup {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    showingPermissions = true
+                    currentView = .permissions
                     appState.shouldShowPermissionsOnStartup = false
                 }
             }
-        }
-        .sheet(isPresented: $showingPermissions) {
-            PermissionsView()
-        }
-        .sheet(isPresented: $showingHistory) {
-            HistoryView()
         }
         .sheet(isPresented: $appState.errorHandler.showingErrorDetails) {
             if let error = appState.errorHandler.lastError {
@@ -171,6 +275,18 @@ struct MenuBarView: View {
         }
     }
     
+    private func performDirectRephrase() async {
+        let result = await appState.rephraseText(directInputText)
+        
+        switch result {
+        case .success(let rephrasedText):
+            directRephraseResult = rephrasedText
+            currentView = .directResult
+        case .failure(let error):
+            appState.errorHandler.handle(error, context: "Direct Input")
+        }
+    }
+    
     private func handleErrorAction(for error: RephraserError) {
         switch error.category {
         case .configuration:
@@ -178,7 +294,7 @@ struct MenuBarView: View {
             NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
         case .permissions:
             // Open System Settings
-            showingPermissions = true
+            currentView = .permissions
         default:
             // For other errors, just dismiss (user can manually retry)
             break
@@ -470,5 +586,117 @@ struct StyleOptionRow: View {
                 // Handle hover state if needed
             }
         }
+    }
+}
+
+// MARK: - Direct Rephrase Result View
+struct DirectRephraseResultView: View {
+    let originalText: String
+    let rephrasedText: String
+    let onDismiss: () -> Void
+    let onUseResult: () -> Void
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            // Header with Back Button
+            HStack {
+                Button(action: onDismiss) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                            .font(.caption)
+                        Text("Back")
+                            .font(.caption)
+                    }
+                    .foregroundColor(.blue)
+                }
+                .buttonStyle(.plain)
+                .keyboardShortcut(.escape)
+                
+                Spacer()
+                
+                Text("Rephrase Result")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                Spacer()
+                
+                Button("Done") {
+                    onDismiss()
+                }
+                .keyboardShortcut(.defaultAction)
+            }
+            
+            Divider()
+            
+            // Text comparison
+            HStack(alignment: .top, spacing: 16) {
+                // Original text
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Original")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    
+                    ScrollView {
+                        Text(originalText)
+                            .font(.body)
+                            .textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(8)
+                    }
+                    .frame(maxHeight: 200)
+                }
+                
+                // Arrow
+                Image(systemName: "arrow.right")
+                    .foregroundColor(.blue)
+                    .font(.title2)
+                    .padding(.top, 40)
+                
+                // Rephrased text
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Rephrased")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    
+                    ScrollView {
+                        Text(rephrasedText)
+                            .font(.body)
+                            .textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(8)
+                    }
+                    .frame(maxHeight: 200)
+                }
+            }
+            
+            // Action buttons
+            HStack(spacing: 12) {
+                Button("Copy Original") {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(originalText, forType: .string)
+                }
+                .buttonStyle(.bordered)
+                
+                Button("Copy Rephrased") {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(rephrasedText, forType: .string)
+                }
+                .buttonStyle(.borderedProminent)
+                
+                Button("Use as Input") {
+                    onUseResult()
+                }
+                .buttonStyle(.bordered)
+                .help("Use the rephrased text as input for further rephrasing")
+            }
+            
+            Spacer()
+        }
+        .padding()
+        .frame(width: 600, height: 400)
     }
 }

@@ -9,18 +9,36 @@ import SwiftUI
 
 struct PermissionsView: View {
     @StateObject private var permissionsManager = PermissionsManager()
-    @Environment(\.dismiss) private var dismiss
+    let onBack: () -> Void
     
     var body: some View {
         VStack(spacing: 20) {
-            // Header
+            // Header with Back Button
             HStack {
-                Image(systemName: "shield.checkered")
-                    .font(.title)
+                Button(action: { onBack() }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                            .font(.caption)
+                        Text("Back")
+                            .font(.caption)
+                    }
                     .foregroundColor(.blue)
-                Text("App Permissions")
-                    .font(.title)
-                    .fontWeight(.semibold)
+                }
+                .buttonStyle(.plain)
+                .keyboardShortcut(.escape)
+                
+                Spacer()
+                
+                HStack {
+                    Image(systemName: "shield.checkered")
+                        .font(.title)
+                        .foregroundColor(.blue)
+                    Text("App Permissions")
+                        .font(.title)
+                        .fontWeight(.semibold)
+                }
+                
+                Spacer()
             }
             .padding(.top)
             
@@ -101,7 +119,7 @@ struct PermissionsView: View {
                 
                 if permissionsManager.accessibilityPermissionGranted {
                     Button("Done") {
-                        dismiss()
+                        onBack()
                     }
                     .keyboardShortcut(.defaultAction)
                     .buttonStyle(.borderedProminent)
@@ -201,5 +219,5 @@ struct InstructionStepView: View {
 }
 
 #Preview {
-    PermissionsView()
+    PermissionsView(onBack: {})
 }
